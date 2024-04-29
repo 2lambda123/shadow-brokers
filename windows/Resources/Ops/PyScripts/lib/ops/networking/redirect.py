@@ -6,9 +6,9 @@ import os.path
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import Element
 import dsz.version.checks.windows
-import random
 from ops.parseargs import ArgumentParser
 import util.ip
+import secrets
 
 def parse_redirect_args(arg_list=None, random=False):
     assert (type(random) == type(False)), 'Random must be a Boolean'
@@ -223,14 +223,14 @@ def verify_tunnel(id=None, dsz_cmd=None, return_status=False):
 def get_random_port(os=None):
     if ((os is None) or (os.lower() in ['win', 'windows'])):
         if dsz.version.checks.windows.IsVistaOrGreater():
-            return str(random.randint(49152, 65535))
+            return str(secrets.SystemRandom().randint(49152, 65535))
         else:
-            return str(random.randint(1025, 5000))
+            return str(secrets.SystemRandom().randint(1025, 5000))
     elif (os.lower() in ['linux']):
-        return str(random.randint(32768, 61000))
+        return str(secrets.SystemRandom().randint(32768, 61000))
     elif (os.lower() in ['bsd']):
-        return str(random.randint(1024, 5000))
+        return str(secrets.SystemRandom().randint(1024, 5000))
     elif (os.lower() in ['freebsd']):
-        return str(random.randint(49152, 65535))
+        return str(secrets.SystemRandom().randint(49152, 65535))
     else:
-        return str(random.randint(49152, 65535))
+        return str(secrets.SystemRandom().randint(49152, 65535))

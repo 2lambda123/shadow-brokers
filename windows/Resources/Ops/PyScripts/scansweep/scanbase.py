@@ -2,10 +2,10 @@
 import ops
 import ops.db
 import os.path
-import random
 import pickle
 import dsz
 import sqlite3
+import secrets
 
 def get_job(session):
     conn = get_database_conn()
@@ -15,7 +15,7 @@ def get_job(session):
         job_list.append(row)
     if (len(job_list) == 0):
         return False
-    random.shuffle(job_list)
+    secrets.SystemRandom().shuffle(job_list)
     job = job_list.pop()
     query_execute_wrapper(conn, query_string="UPDATE scansweep_queue SET inprogress='True' WHERE session=? AND rowid=? AND inprogress=? AND complete=?", query_list=[session, job['rowid'], 'False', 'False'], max_tries=10)
     curs = query_execute_wrapper(conn, query_string='SELECT job,target FROM scansweep_queue WHERE rowid=?', query_list=[job['rowid']], no_return=False, max_tries=10)
@@ -217,7 +217,7 @@ def query_execute_wrapper(db_conn, query_string=None, query_list=None, max_tries
             else:
                 return curs
         except sqlite3.OperationalError:
-            dsz.Sleep(((1 + i) * random.randint(250, 1250)))
+            dsz.Sleep(((1 + i) * secrets.SystemRandom().randint(250, 1250)))
             continue
     raise 
 

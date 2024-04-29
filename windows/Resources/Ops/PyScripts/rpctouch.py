@@ -1,7 +1,8 @@
 
 import sys
 import dsz.lp, dsz.cmd
-import random
+import secrets
+
 scans = ['1', '2', '3', '5', '7', '8', '9', '10', '13', '14', '15']
 scanports = [{'port': '135', 'protocol': 'rpc_tcp', 'num': '1'}, {'port': '139', 'protocol': 'rpc_nbt', 'num': '2'}, {'port': '445', 'protocol': 'rpc_smb', 'num': '3'}, {'port': '80', 'protocol': 'rpc_http', 'num': '6'}]
 
@@ -35,7 +36,7 @@ def __main__(arguments):
     redircmdid = 0
     redirport = 65500
     while (redircmdid == 0):
-        redirport = random.randint(10000, 65500)
+        redirport = secrets.SystemRandom().randint(10000, 65500)
         redircmdid = startredir(redirport, target, ourscan['port'])
     dsz.ui.Echo(('RPCTOUCH (type %s, %s) on %s' % (type, port, target)))
     if (type == '15'):
