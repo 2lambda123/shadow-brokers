@@ -7,6 +7,8 @@ import subprocess
 import sys
 import time
 import traceback
+from security import safe_command
+
 SLEEP = 5
 LETTERS = 'BCDEFGHIJKLMNOPQRSTUVWXYZ'
 REFRESH_LIST = 'REFRESH LIST'
@@ -50,7 +52,7 @@ def create_replay_disk(ops_disk_path, replay_disk_path):
     print(('\nCopying replay from %s (may take a moment)...' % ops_disk_path))
     os.chdir(ops_disk_path)
     script_path = os.path.join(ops_disk_path, 'CreateReplay.py')
-    proc = subprocess.Popen(('python %s' % script_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = safe_command.run(subprocess.Popen, ('python %s' % script_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     proc.communicate(('%s\n' % replay_disk_path))
 
 def sentinel_prompts(ops_disk_path, output_dir):
@@ -77,7 +79,7 @@ def sentinel_prompts(ops_disk_path, output_dir):
     logs_path = os.path.join(os.path.dirname(ops_disk_path), 'Logs')
     command_line += (' ' + logs_path)
     print(('\n\nRunning: %s\n' % command_line))
-    return subprocess.Popen(command_line)
+    return safe_command.run(subprocess.Popen, command_line)
 
 def project_menu(ops_disk_path, replay_disk_path):
     logs_path = os.path.join(os.path.dirname(ops_disk_path), 'Logs')
@@ -98,7 +100,7 @@ def project_menu(ops_disk_path, replay_disk_path):
         write_user_defaults_file(replay_disk_path, normpath(project_log_dir))
         print(("\nLaunching GUI for '%s'... " % choice), end='')
         script_path = os.path.join(replay_disk_path, 'start_lp.py')
-        subprocess.Popen(('python %s' % script_path))
+        safe_command.run(subprocess.Popen, ('python %s' % script_path))
         print('done.\n')
         print(('Sleeping for %s seconds, then you can select another project... ' % SLEEP), end='')
         time.sleep(SLEEP)
